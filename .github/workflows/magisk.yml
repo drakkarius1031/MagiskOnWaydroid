@@ -307,8 +307,8 @@ jobs:
           e2fsck -yf ${{ matrix.arch }}/product.img
           resize2fs ${{ matrix.arch }}/product.img 1024M
           e2fsck -yf ${{ matrix.arch }}/system_ext.img
-          resize2fs -f ${{ matrix.arch }}/system_ext.img 108M
-          e2fsck -yf ${{ matrix.arch }}/system_ext.img
+          SYSTEM_EXT_SIZE=$(($(du --apparent-size -sB512 ${{ matrix.arch }}/system_ext.img | cut -f1) + 20000))
+          resize2fs ${{ matrix.arch }}/system_ext.img "$SYSTEM_EXT_SIZE"s || abort
       - name: Expand vendor
         run: |
           e2fsck -yf ${{ matrix.arch }}/vendor.img
